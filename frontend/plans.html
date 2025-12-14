@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Plans</title>
+</head>
+<body>
+<h2>Fitness Plans</h2>
+
+<div id="plans"></div>
+
+<script>
+const token = localStorage.getItem("token");
+
+fetch("http://127.0.0.1:5000/plans")
+.then(res => res.json())
+.then(data => {
+    let html = "";
+    data.forEach(p => {
+        html += `
+        <div>
+            <h3>${p.title}</h3>
+            <p>${p.description}</p>
+            <p>Price: ${p.price}</p>
+            <button onclick="subscribe(${p.id})">Subscribe</button>
+            <hr>
+        </div>`;
+    });
+    document.getElementById("plans").innerHTML = html;
+});
+
+function subscribe(planId) {
+    fetch("http://127.0.0.1:5000/subscribe", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ plan_id: planId })
+    })
+    .then(res => res.json())
+    .then(data => alert(JSON.stringify(data)));
+}
+</script>
+</body>
+</html>
